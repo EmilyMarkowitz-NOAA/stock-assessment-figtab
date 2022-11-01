@@ -3,8 +3,7 @@
 # [AFSC RACE GAP Figures for Stock Assessment Reports](%60r%20link_repo%60) <img src="https://avatars.githubusercontent.com/u/91760178?s=96&amp;v=4" alt="Logo." align="right" width="139" height="139"/>
 
 **The creation of this repo was inspired by this
-[issue](https://github.com/afsc-gap-products/data-requests/issues/41).
-**
+[issue](https://github.com/afsc-gap-products/data-requests/issues/41).**
 
 The scripts therein reproducibly produce annual figures and tables for
 stock assessment reports, presentations, and other outreach documents;
