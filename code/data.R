@@ -112,6 +112,12 @@ cpue_data <- dplyr::bind_rows(
 # comp data
 comp_data <- dplyr::bind_rows(
   # length comps
+  sizecomp_nbs_stratum0 %>% # NBS CPUE data
+    dplyr::filter(stratum == 999999) %>% 
+    dplyr::mutate(SRVY = "NBS", 
+                  comp = "length") %>% 
+    dplyr::rename(value = length) %>% 
+    dplyr::select(SRVY, species_code, year, value, comp, males, females, unsexed), 
   sizecomp_ebs_plusnw_stratum0 %>% # EBS CPUE data
     dplyr::filter(stratum == 999999) %>% 
     dplyr::mutate(SRVY = "EBS", 
@@ -142,9 +148,12 @@ comp_data <- dplyr::bind_rows(
         dplyr::filter(stratum == 999999), 
       agecomp_total0 %>% 
         dplyr::rename(SRVY = survey, 
+                      year = survey_year, 
                       meanlen = mean_length, 
-                      sdev = standard_deviation)) %>% 
-      dplyr::mutate(comp = "age", 
+                      sdev = standard_deviation)  %>% 
+        dplyr::mutate(SRVY = "AI")) %>% 
+      dplyr::mutate( 
+                    comp = "age", 
                     sex = dplyr::case_when(
                       sex == 1 ~ "males", 
                       sex == 2 ~ "females", 

@@ -8,6 +8,9 @@
 #' End date: 2022-10-31
 #' ---
 
+# source("./code/run.R")
+# 1
+
 # Source help files ------------------------------------------------------------
 
 # Load functions
@@ -15,6 +18,9 @@ source("./code/functions.R") # based on functions from https://github.com/EmilyM
 
 # Download data
 dir_data <- "./data/"
+dir_out <- "./output/"
+dir_fig <- paste0(dir_out, Sys.Date(), "/")
+dir.create(dir_fig)
 
 locations <- c( # data pulled from Oracle for these figures: 
   "RACEBASE.HAUL",
@@ -49,171 +55,56 @@ source("./code/data.R")
 maxyr <-2022
 
 # Requests: 
-# Rephrased requests as data frame so I can loop through each ask: 
+googledrive::drive_auth()
+1
+googledrive::drive_download(file = googledrive::as_id("https://docs.google.com/spreadsheets/d/12MsI5Ro9f9FOjib5REOJAg2ZXLH1MJJBC48T8e73QcA/edit#gid=0"), 
+                            # type = "", 
+                            overwrite = TRUE, 
+                            path = paste0(dir_fig, "requests.xlsx"))
 
-## 1.) Eastern Bering Sea: ATF 1992-2022
-### CPUE plots 3 row x 2 col plus NBS and BSS (one with coldpool outline in red or yellow, one without)
-### M and F side by side length comps EBS only
-### M and F side by side age comps EBS only
-### M and F side by side length comps BSS only
-### M and F side by side age comps BSS only
-comb <- data.frame(
-  # data
-  SRVY = c("EBS", "EBS_NBS", "EBS_NBS_BSS", "BSS"), 
-  common_abrv = "atf",
-  common_name = "arrowtooth flounder",
-  species_code = 10110, 
-  year_start = 1991, 
-  year_end = maxyr, 
-  # plots
-  bubble = FALSE, 
-  bubble_coldpool = FALSE, 
-  cpue = c(TRUE, TRUE, TRUE, FALSE), 
-  cpue_coldpool = c(TRUE, TRUE, TRUE, FALSE), 
-  length_comp = c(TRUE, FALSE, FALSE, TRUE) , 
-  age_comp = c(TRUE, FALSE, FALSE, TRUE) )
-
-## 2.) Eastern Bering Sea: KAM 1991-2022 (although note from Lyle Britt that high confidence in speciation did not start until 1992 for ATF and KAM)
-### CPUE plots 3 row x 2 col plus NBS and BSS (one with coldpool outline in red or yellow, one without)
-### M and F side by side length comps EBS only
-### M and F side by side age comps EBS only
-### M and F side by side length comps BSS only
-### M and F side by side age comps BSS only
-comb <- dplyr::bind_rows(
-  comb, 
-  data.frame(
-    # data
-    SRVY = c("EBS", "EBS_NBS", "EBS_NBS_BSS", "BSS"), 
-    common_abrv = "kam",
-    common_name = "Kamchatka flounder",
-    species_code = 10112, 
-    year_start = 1991, 
-    year_end = maxyr, 
-    # plots
-    bubble = FALSE, 
-    bubble_coldpool = FALSE, 
-    cpue = c(TRUE, TRUE, TRUE, FALSE), 
-    cpue_coldpool = c(TRUE, TRUE, TRUE, FALSE), 
-    length_comp = c(TRUE, FALSE, FALSE, TRUE) , 
-    age_comp = c(TRUE, FALSE, FALSE, TRUE) )
-)
-
-## 3.) Aleutian Islands Survey: ATF 1991-2022
-### Bubble plots 3 row x 1 col
-### CPUE plots 3 row x 1 col
-### M and F side by side length comps
-### M and F side by side age comps
-
-comb <- dplyr::bind_rows(
-  comb, 
-  data.frame(
-    # data
-    SRVY = "AI", 
-    common_abrv = "atf",
-    common_name = "arrowtooth flounder",
-    species_code = 10110, 
-    year_start = 1991, 
-    year_end = maxyr, 
-    # plots
-    bubble = TRUE, 
-    bubble_coldpool = FALSE, 
-    cpue = TRUE, 
-    cpue_coldpool = FALSE, 
-    length_comp = TRUE, 
-    age_comp = TRUE)
-)
-
-## 4.) Aleutian Islands Survey: KAM 1991-2022
-### Bubble plots 3 row x 1 col
-### CPUE plots 3 row x 1 col
-### M and F side by side length comps
-### M and F side by side age comps
-
-comb <- dplyr::bind_rows(
-  comb, 
-  data.frame(
-    # data
-    SRVY = "AI", 
-    common_abrv = "kam",
-    common_name = "Kamchatka flounder",
-    species_code = 10112, 
-    year_start = 1991, 
-    year_end = maxyr, 
-    # plots
-    bubble = TRUE, 
-    bubble_coldpool = FALSE, 
-    cpue = TRUE, 
-    cpue_coldpool = FALSE, 
-    length_comp = TRUE, 
-    age_comp = TRUE)
-)
-
-## 5.) Aleutian Islands Survey: SR 1991-2022
-### Bubble plots 3 row x 1 col
-### CPUE plots 3 row x 1 col
-### Totally forgot we already have the ridges plot for Shortraker lengths, so all good there!
-
-comb <- dplyr::bind_rows(
-  comb, 
-  data.frame(
-    # data
-    SRVY = "AI", 
-    common_abrv = "sr",
-    common_name = "shortracker rockfish",
-    species_code = 30576, 
-    year_start = 1991, 
-    year_end = maxyr, 
-    # plots
-    bubble = TRUE, 
-    bubble_coldpool = FALSE, 
-    cpue = TRUE, 
-    cpue_coldpool = FALSE, 
-    length_comp = FALSE, 
-    age_comp = FALSE)
-)
-
-## 6.) Eastern Bering Sea Slope (BSS): SR 2002-2016
-### CPUE plots 3 row x 2 col, not sure how this will look, but might need an outline of EBS and NBS survey just for reference? This may be a really odd one to do, so no worries if it doesn't work.
-
-comb <- dplyr::bind_rows(
-  comb, 
-  data.frame(
-    # data
-    SRVY = c("BSS", "BSS_EBS_NBS"), 
-    common_abrv = "sr",
-    common_name = "shortracker rockfish",
-    species_code = 30576, 
-    year_start = 1991, 
-    year_end = maxyr, 
-    # plots
-    bubble = TRUE, 
-    bubble_coldpool = TRUE, 
-    cpue = TRUE, 
-    cpue_coldpool = TRUE, 
-    length_comp = FALSE, 
-    age_comp = FALSE)
-)
+comb <- readxl::read_xlsx(path = paste0(dir_fig, "requests.xlsx"), 
+                          sheet = "Requests", skip = 3) %>% 
+  janitor::clean_names() %>% 
+  dplyr::mutate(common_abrv = dplyr::case_when(
+    common_name == "arrowtooth flounder" ~ "atf",
+    common_name == "Kamchatka flounder" ~ "kam", 
+    common_name == "shortracker rockfish" ~ "sr",
+  TRUE ~"other"), 
+  species_code = dplyr::case_when(
+    common_name == "arrowtooth flounder" ~ 10110,
+    common_name == "Kamchatka flounder" ~ 10112, 
+    common_name == "shortracker rockfish" ~ 30576,
+  TRUE ~ 0) ) %>% 
+  dplyr::rename(SRVY = srvy) %>%
+    # What can I actually do:
+  dplyr::filter(!grepl(pattern = "BSS", x = SRVY) )  # %>% # I can't do anything with BSS data
+  # dplyr::mutate( # remove plots that can't be plotted across multiple survey areas
+    # cpue_coldpool = ifelse(grepl(pattern = "AI", x = SRVY), FALSE, cpue_coldpool) )
+    # across(.cols = ends_with("comp"), .fns = ifelse, grepl(pattern = "_", x = SRVY), FALSE, .),
+    # across(.cols = ends_with("coldpool"), .fns = ifelse, grepl(pattern = "_", x = SRVY), FALSE, .), 
+    # across(.cols = ends_with("comp"), .fns = ifelse, grepl(pattern = "AI", x = SRVY), FALSE, .),
+    # across(.cols = ends_with("coldpool"), .fns = ifelse, grepl(pattern = "AI", x = SRVY), FALSE, .))
 
 # What does comb look like? 
 # > comb
-# SRVY common_abrv          common_name species_code year_start year_end bubble bubble_coldpool  cpue cpue_coldpool length_comp age_comp
-# 1          EBS         atf  arrowtooth flounder        10110       1991     2022  FALSE           FALSE  TRUE          TRUE        TRUE     TRUE
-# 2      EBS_NBS         atf  arrowtooth flounder        10110       1991     2022  FALSE           FALSE  TRUE          TRUE       FALSE    FALSE
-# 3  EBS_NBS_BSS         atf  arrowtooth flounder        10110       1991     2022  FALSE           FALSE  TRUE          TRUE       FALSE    FALSE
-# 4          BSS         atf  arrowtooth flounder        10110       1991     2022  FALSE           FALSE FALSE         FALSE        TRUE     TRUE
-# 5          EBS         kam   Kamchatka flounder        10112       1991     2022  FALSE           FALSE  TRUE          TRUE        TRUE     TRUE
-# 6      EBS_NBS         kam   Kamchatka flounder        10112       1991     2022  FALSE           FALSE  TRUE          TRUE       FALSE    FALSE
-# 7  EBS_NBS_BSS         kam   Kamchatka flounder        10112       1991     2022  FALSE           FALSE  TRUE          TRUE       FALSE    FALSE
-# 8          BSS         kam   Kamchatka flounder        10112       1991     2022  FALSE           FALSE FALSE         FALSE        TRUE     TRUE
-# 9           AI         atf  arrowtooth flounder        10110       1991     2022   TRUE           FALSE  TRUE         FALSE        TRUE     TRUE
-# 10          AI         kam   Kamchatka flounder        10112       1991     2022   TRUE           FALSE  TRUE         FALSE        TRUE     TRUE
-# 11          AI          sr shortracker rockfish        30576       1991     2022   TRUE           FALSE  TRUE         FALSE       FALSE    FALSE
-# 12         BSS          sr shortracker rockfish        30576       1991     2022   TRUE            TRUE  TRUE          TRUE       FALSE    FALSE
-# 13 BSS_EBS_NBS          sr shortracker rockfish        30576       1991     2022   TRUE            TRUE  TRUE          TRUE       FALSE    FALSE
+# # A tibble: 14 × 16
+# yr_requested requestor report srvy        common_name         yr_start yr_end length_comp age_comp bubble bubble_coldpool cpue  cpue_coldpool notes common_abrv species_code
+# <dbl> <chr>     <chr>  <chr>       <chr>                   <dbl>  <dbl> <lgl>       <lgl>    <lgl>  <lgl>           <lgl> <lgl>         <lgl> <chr>              <dbl>
+#   1         2022 Shotwell  SAFE   EBS         arrowtooth flounder      1991   2022 TRUE        TRUE     FALSE  FALSE           TRUE  TRUE          NA    atf                10110
+# 2         2022 Shotwell  SAFE   EBS_NBS     arrowtooth flounder      1991   2022 FALSE       FALSE    FALSE  FALSE           TRUE  TRUE          NA    atf                10110
+# 3         2022 Shotwell  SAFE   EBS_NBS_BSS arrowtooth flounder      1991   2022 FALSE       FALSE    FALSE  FALSE           TRUE  TRUE          NA    atf                10110
+# 4         2022 Shotwell  SAFE   BSS         arrowtooth flounder      1991   2022 TRUE        TRUE     FALSE  FALSE           TRUE  TRUE          NA    atf                10110
+# 5         2022 Shotwell  SAFE   AI          arrowtooth flounder      1991   2022 TRUE        TRUE     FALSE  FALSE           TRUE  TRUE          NA    atf                10110
+# 6         2022 Bryan     SAFE   EBS         Kamchatka flounder       1991   2022 TRUE        TRUE     FALSE  FALSE           TRUE  TRUE          NA    kam                10112
+# 7         2022 Bryan     SAFE   EBS_NBS     Kamchatka flounder       1991   2022 FALSE       FALSE    FALSE  FALSE           TRUE  TRUE          NA    kam                10112
+# 8         2022 Bryan     SAFE   EBS_NBS_BSS Kamchatka flounder       1991   2022 FALSE       FALSE    FALSE  FALSE           TRUE  TRUE          NA    kam                10112
+# 9         2022 Bryan     SAFE   BSS         Kamchatka flounder       1991   2022 TRUE        TRUE     FALSE  FALSE           FALSE FALSE         NA    kam                10112
+# 10         2022 Bryan     SAFE   AI          arrowtooth flounder      1991   2022 TRUE        TRUE     FALSE  FALSE           TRUE  TRUE          NA    atf                10110
+# 11         2022 Shotwell  SAFE   AI          shortracker rockfish     1991   2022 TRUE        TRUE     TRUE   TRUE            TRUE  TRUE          NA    sr                 30576
+# 12         2022 Shotwell  SAFE   EBS_NBS_BSS shortracker rockfish     1991   2022 FALSE       FALSE    TRUE   TRUE            TRUE  TRUE          NA    sr                 30576
+# 13         2022 Shotwell  SAFE   EBS_NBS     shortracker rockfish     1991   2022 FALSE       FALSE    TRUE   TRUE            TRUE  TRUE          NA    sr                 30576
+# 14         2022 Shotwell  SAFE   BSS         shortracker rockfish     1991   2022 TRUE        TRUE     TRUE   TRUE            TRUE  TRUE          NA    sr                 30576
 
-# What can I actually do:
-comb <- comb %>% 
-  dplyr::filter(!grepl(pattern = "BSS", x = SRVY) ) # I can't do anything with BSS data
 
 # Figures ----------------------------------------------------------------------
 
@@ -294,7 +185,7 @@ for (i in 1:nrow(comb)) {
                                    rel_heights = c(0.1,0.9))
       
       # save figures (from functions.R)
-      save_figures(dir_data = dir_data, 
+      save_figures(dir_fig = dir_fig, 
                    filename0 = paste0(filename00, "_", fig_type), 
                    figure = figure)
     }
@@ -350,7 +241,7 @@ for (i in 1:nrow(comb)) {
                                    rel_widths = c(1, 1), rel_heights = c(0.1,0.9))
       
       # save figures (from functions.R)
-      save_figures(dir_data = dir_data, 
+      save_figures(dir_fig = dir_fig, 
                    filename0 = paste0(filename00, "_", fig_type), 
                    figure = figure)
     }
@@ -395,6 +286,8 @@ for (i in 1:nrow(comb)) {
                       species_code %in% spp_code & 
                       year >= comb0$year_start & 
                       year <= comb0$year_end)
+    
+    if (nrow(table_raw0) != 0){
     
     set.breaks <- set_breaks(dat = table_raw0 %>% 
                                dplyr::filter(cpue_kgha > 0), 
@@ -444,7 +337,7 @@ for (i in 1:nrow(comb)) {
           legend_srvy_reg = FALSE)
         
         # save figures (from functions.R)
-        save_figures(dir_data = dir_data, 
+        save_figures(dir_fig = dir_fig, 
                      filename0 = paste0(filename00,"_", fig_type, "_", min(yrs),"-",max(yrs)), 
                      figure = figure, 
                      height = height)
@@ -471,7 +364,7 @@ for (i in 1:nrow(comb)) {
           plot_coldpool = TRUE)
         
         # save figures (from functions.R)
-        save_figures(dir_data = dir_data, 
+        save_figures(dir_fig = dir_fig, 
                      filename0 = paste0(filename00,"_", fig_type, "_", min(yrs),"-",max(yrs)), 
                      figure = figure, 
                      height = height)
@@ -496,7 +389,7 @@ for (i in 1:nrow(comb)) {
           plot_bubble = TRUE)
         
         # save figures (from functions.R)
-        save_figures(dir_data = dir_data, 
+        save_figures(dir_fig = dir_fig, 
                      filename0 = paste0(filename00,"_", fig_type, "_", min(yrs),"-",max(yrs)), 
                      figure = figure, 
                      height = height)
@@ -507,7 +400,7 @@ for (i in 1:nrow(comb)) {
       counter <- counter_new
       
     }
-    
+    }
   }
   
 }

@@ -150,16 +150,16 @@ set_breaks <- function(dat, var) {
 }
 
 
-save_figures <- function(dir_data, filename0, figure, height = 8, width = 6.5) {
+save_figures <- function(dir_fig, filename0, figure, height = 8, width = 6.5) {
   
-  ggsave(filename = paste0(dir_data, "figs/", filename0, ".png"), 
+  ggsave(filename = paste0(dir_fig, filename0, ".png"), 
          plot = figure, 
          device = "png", 
          bg = "white", 
          height = height, 
          width = width)
   
-  # ggsave(filename = paste0(dir_data, "figs/", filename0, ".pdf"), 
+  # ggsave(filename = paste0(dir_fig, filename0, ".pdf"), 
   #        plot = figure, 
   #        device = "pdf",
   #        height = 8, width = 6.5)
