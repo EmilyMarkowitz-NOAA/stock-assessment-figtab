@@ -147,21 +147,19 @@ comp_data <- dplyr::bind_rows(
         dplyr::mutate(SRVY = "NBS") %>% 
         dplyr::filter(stratum == 999999), 
       agecomp_total0 %>% 
-        dplyr::rename(SRVY = survey, 
+        dplyr::rename(#SRVY = survey, 
                       year = survey_year, 
                       meanlen = mean_length, 
                       sdev = standard_deviation)  %>% 
-        dplyr::mutate(SRVY = "AI")) %>% 
-      dplyr::mutate( 
-                    comp = "age", 
+        dplyr::mutate(SRVY = "AI"))  %>% 
+      dplyr::rename(value = age, 
+                    pop = agepop ) %>% 
+      dplyr::select(SRVY, species_code, year, value, sex, pop) %>% 
+      dplyr::mutate(comp = "age", 
                     sex = dplyr::case_when(
                       sex == 1 ~ "males", 
                       sex == 2 ~ "females", 
-                      sex == 3 ~ "unsexed"))  %>% 
-      dplyr::rename(value = age, 
-                    pop = agepop ) %>% 
-      dplyr::select(SRVY, species_code, year, value, comp, sex, pop) ) %>%
-  
+                      sex == 3 ~ "unsexed")) ) %>%
   dplyr::filter(pop > 0 &
                   value >= 0) %>% 
   dplyr::mutate(sex = str_to_sentence(sex), # this will assure the order of appearance in the plot

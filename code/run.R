@@ -125,7 +125,7 @@ for (i in 1:nrow(comb)) {
 
     # wrangle data for this request
     table_raw <- comp_data  %>% 
-      dplyr::filter(SRVY %in% SRVY & 
+      dplyr::filter(SRVY %in% SRVY1 & 
                       species_code %in% spp_code & 
                       year >= comb0$year_start & 
                       year <= comb0$year_end) %>% 
